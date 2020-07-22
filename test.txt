@@ -1,0 +1,14 @@
+# Test File 
+SERIAL_CMD         SG   1   2  0  0  0  "Select the Measure command"
+SEARCH_RESPONSE    SG  "Max run of zeros(time-x):"  "Find the number of p zeros"
+SEARCH_RESPONSE    SG  "Max run of zeros(Voltage-y):"  "Find the number of p zeros"
+PAUSE                   1000  "Sleep us"
+FLUSH_RX                      "Flush Rx BUffer"
+SERIAL_CMD         SG   1   5  0  0  0   "Select lane"
+#SEARCH_RESPONSE    SG  "QLM/DLM Lane"  "wait fo rte prompt"
+SERIAL_CMD         SG   1   2  0  0  0  "Select lane"
+#SEARCH_RESPONSE    SG  "Menu choice []"  "wait for end of command"
+SERIAL_CMD         SG   1   2  0  0  0  "Select the Measure command"
+SEARCH_RESPONSE    SG  "Max run of zeros(time-x):"  "Find the number of p zeros"
+SEARCH_RESPONSE    SG  "Max run of zeros(Voltage-y):"  "Find the number of p zeros"
+
