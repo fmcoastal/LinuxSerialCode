@@ -40,8 +40,10 @@ extern pthread_t g_tid[];
 // void * struct passed as part of the Fork Worker thread
 typedef struct 
 {
-   int done;
    int fd;
+   int done;
+   pthread_t  rx_thread_id;
+   pthread_t  tx_thread_id;
 }datablock;
 
 // TX Thread

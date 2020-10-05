@@ -7,7 +7,8 @@
 #include <stdio.h>    // for printf()
 #include <fcntl.h>    // for open()
 #include <pthread.h>  // for thread Items
-#include <stdlib.h>  // for itoa()
+#include <stdlib.h>   // for itoa()
+#include <signal.h>   // for SIGINT
 #include <getopt.h>
 #include "fln_serial.h"
 #include "ffile.h"
@@ -38,7 +39,7 @@ uint64_t g_serial_debug = 0;
 char g_TestLaneConfigFilename[FILE_NAME_SIZE] = {0};;
 
 
-
+int * g_ctrl_c = NULL;;
 
 //----------------------------------
 pthread_t g_tid[2];             // posix thread array
@@ -59,6 +60,12 @@ char outFileName[] = {"log.txt"};
 
 uint64_t fatox64(int8_t* string);
 int   RunScriptFile(char * filename);
+
+
+void Ctrl_C_Handler(int dummy) {
+    if( g_ctrl_c != NULL ) *g_ctrl_c = 1;   // flag done
+}
+
  
 void print_usage(void)
 {
@@ -81,7 +88,8 @@ typedef struct
 {
    int done;
    int fd;
-
+   pthread_t  rx_thread_id;
+   pthread_t  tx_thread_id;
 }datablock;
 
 
@@ -165,20 +173,24 @@ int rx(void* arg)
 void *WorkerThread(void *arg)
 {
 pthread_t id = pthread_self();
- 
+datablock *p_db = ( datablock *)arg;
+
    if(pthread_equal(id,g_tid[0]))
    {
        // tx
        tx(arg);
+       p_db->tx_thread_id = id; // save the thread id 
    }
    else
   {
       // rx
       rx(arg);
+      p_db->tx_thread_id = id; // save the thread id
   }
   return NULL;
 
 }
+
 
 
 
@@ -256,6 +268,10 @@ while ((option = getopt(argc, argv,"mvls:d:t:")) != -1) {
    printf("       %16s Script File Name\n",script_file);
    printf("       %16d Verbose\n",(int)g_Verbose);
    printf("  0x%016llx   Debug\n",(llu)g_Debug);
+
+
+   g_ctrl_c = &(db.done);
+   signal(SIGINT, Ctrl_C_Handler );
 
 
    if ( g_LogSerialCom != 0)
