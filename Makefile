@@ -9,21 +9,28 @@ CC = gcc
 LD = gcc
 AR = ar
 
+#CC = aarch64-marvell-linux-gnu-gcc
+#LD = aarch64-marvell-linux-gnu-gcc
+#AR = aarch64-marvell-linux-gnu-ar
 
-fs_expect: fln_serial.o Makefile main.o ffile.o frbuff.o fprintbuff.o
-	$(LD) $(LDFLAGS) -o fs_expect  fln_serial.o main.o ffile.o fprintbuff.o frbuff.o 
+
+
+
+
+fs_expect: fln_serial.o Makefile main.o ffile.o frbuff.o fprintbuff.o fln_serial.o
+	$(CROSS)$(LD) $(LDFLAGS) -o fs_expect  fln_serial.o main.o ffile.o fprintbuff.o frbuff.o 
 
 main.o: main.c
-	$(CC)  $(CCFLAGS) -o main.o  main.c
+	$(CROSS)$(CC)  $(CCFLAGS) -o main.o  main.c
 fln_serial.o: fln_serial.c fln_serial.h
-	$(CC)  $(CCFLAGS) -o fln_serial.o  fln_serial.c
+	$(CROSS)$(CC)  $(CCFLAGS) -o fln_serial.o  fln_serial.c
 ffile.o: ffile.c  ffile.h
-	$(CC)  $(CCFLAGS) -o ffile.o  ffile.c
+	$(CROSS)$(CC)  $(CCFLAGS) -o ffile.o  ffile.c
 frbuff.o: frbuff.c frbuff.h
-	$(CC)  $(CCFLAGS) -o frbuff.o  frbuff.c
+	$(CROSS)$(CC)  $(CCFLAGS) -o frbuff.o  frbuff.c
 
 fprintbuff.o: fprintbuff.c fprintbuff.h
-	$(CC)  $(CCFLAGS) -o fprintbuff.o  fprintbuff.c
+	$(CROSS)$(CC)  $(CCFLAGS) -o fprintbuff.o  fprintbuff.c
 
 
 
